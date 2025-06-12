@@ -4,46 +4,42 @@ import React from 'react';
 import type {Store, Action} from 'redux';
 import type {GlobalState} from '@mattermost/types/store';
 
+
 import manifest from '@/manifest';
 
 import Main from './Components/Main';
-import GlobalHeaderRight from './Components/GlobalHeaderRight';
+// import Test from './Components/Test';
 
-const Icon = () => <i className='icon fa fa-plug'/>;
 
-const GlobalHeaderCenter = () => {
+const MyHeaderCenter = () => {
+    return null;
+};
+const MyHeaderRight = () => {
     return null;
 };
 
-const BackstageWrapped = () => (
-    
-    <Main/>
-  
-);
 
 export default class Plugin {
 
     public async initialize(
         registry: any, store: Store<GlobalState, Action<Record<string, unknown>>>): Promise<void> {
 
-        const showTeamSidebar = false;
-
-        if (registry.registerProduct) {
-
             registry.registerProduct(
-            '/project-overview',       // baseURL
-            Icon,                      // switcherIcon
-            'ProjectOverview',         // switcherText
-            '/project-overview',     // switcherLinkURL
-            Main,                      // mainComponent
-            GlobalHeaderCenter,        // headerCentreComponent
-            GlobalHeaderRight,         // headerRightComponent
-            showTeamSidebar,           // showTeamSidebar
-            true,                      // showAppBar
-            true,                      // wrapped
-            null                       // publicComponent
-        );
-        }
+                    '/project-overview',    // baseURL (path prefix)
+                    'product-channels',                // switcherIcon (string icon name or JSX icon)
+                    'Project Overview',     // switcherText (displayed in product switcher)
+                    '/project-overview',   // switcherLinkURL (where it links)
+                    Main,         // mainComponent (React component)
+                    MyHeaderCenter,
+                    MyHeaderRight,
+                    true,
+                    // null,
+                    // false,                  // showTeamSidebar
+                    // true,                  // showAppBar
+                    // true,                  // wrapped
+                    // null                   // publicComponent (optional)
+            );
+
     }
 }
 

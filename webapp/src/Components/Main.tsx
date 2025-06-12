@@ -1,65 +1,55 @@
-import React from 'react';
-import {BrowserRouter as Router, Route, Switch, Link, useRouteMatch} from 'react-router-dom';
+import React, { useEffect } from 'react';
+import {Route, Switch} from 'react-router-dom';
 import Sidebar from './sidebar/Sidebar';
 import styled, { css } from 'styled-components';
 
-const BackstageContainer = styled.div`
-    height: 100%;
-    background: var(--center-channel-bg);
-    overflow-y: auto;
-`;
+//pages
+import Project from './Project/Project';
+import StakeHolder from './StakeHolder/StakeHolder';
+import MyStatus from './MyStatus/MyStatus';
+import ProjectTabs from './Project/ProjectTabs';
+import StakeHolderTabs from './StakeHolder/StakeHolderTabs';
+import MyProjects from './MyStatus/MyProjects';
+import { useSelector } from 'react-redux';
+import {GlobalState} from '@mattermost/types/store';
+import {Theme, getTheme} from 'mattermost-redux/selectors/entities/preferences';
 
-const LHSContainer = styled.div`
-    display: flex;
-    width: 240px;
-    flex-direction: column;
-    background-color: var(--sidebar-bg);
-`;
-
-const Dashboard = () => (
-    <div>
-        <h2>Dashboard</h2>
-        <p>This is the main dashboard of your product.</p>
-    </div>
-);
-
-const StakeHolders = () => (
-    <div>
-        <h2>stack-holders</h2>
-        <p>StakeHolders page content here.</p>
-    </div>
-);
-
-const MyStatus = () => (
-    <div>
-        <h2>MyStatus</h2>
-        <p>MyStatus page content here.</p>
-    </div>
-);
 
 const Main = () => {
 
-    const {path} = useRouteMatch();
+     const currentTheme = useSelector<GlobalState, Theme>(getTheme);
+    useEffect(() => {
+        // This class, critical for all the styling to work, is added by ChannelController,
+        // which is not loaded when rendering this root component.
+        document.body.classList.add('app__body');
+        const root = document.getElementById('root');
+        if (root) {
+            root.className += ' channel-view';
+        }
+        return function cleanUp() {
+            document.body.classList.remove('app__body');
+        };
+    }, [currentTheme]);
 
     return (
-        <BackstageContainer>
-            <MainContainer $noContainerScroll={true}>
-                <LHSContainer data-testid='lhs-navigation'>
-                        <Sidebar/>
-                </LHSContainer>
+            <BackstageContainer>
+                <MainContainer $noContainerScroll={true}>
+                    <LHSContainer data-testid='lhs-navigation'>
+                            <Sidebar/>
+                    </LHSContainer>
 
-                  <Switch >
-                        <div style={{padding: '20px'}}>
-                            <Switch>
-                                <Route exact path={`${path}/`} component={Dashboard} />
-                                <Route path={`${path}/stack-holders`} component={StakeHolders} />
-                                <Route path={`${path}/my-status`} component={MyStatus} />
-                            </Switch>
-                        </div>
-                </Switch>
-            </MainContainer>
-        </BackstageContainer>
-        
+                    <Switch >
+                        <RHSContainer>
+                            <Route exact path={`/project-overview`} component={Project} />
+                            <Route path={`/project-overview/stack-holders`} component={StakeHolder} />
+                            <Route path={`/project-overview/my-status`} component={MyStatus} />
+                            <Route path={`/project-overview/project/:id`} component={ProjectTabs} />
+                            <Route path={`/project-overview/stack-holder/:id`} component={StakeHolderTabs} />
+                            <Route path={`/project-overview/my-stats/:id`} component={MyProjects} />
+                        </RHSContainer>
+                    </Switch>
+                </MainContainer>
+            </BackstageContainer>
     );
 };
 
@@ -75,6 +65,21 @@ const MainContainer = styled.div<{$noContainerScroll: boolean}>`
     `)}
 `;
 
+const BackstageContainer = styled.div`
+    height: 100%;
+    background: var(--center-channel-bg);
+    overflow-y: auto;
+`;
 
+const LHSContainer = styled.div`
+    display: flex;
+    width: 240px;
+    flex-direction: column;
+    background-color: var(--sidebar-bg);
+`;
+
+const RHSContainer = styled.div`
+    padding: 20px
+`;
 
 export default Main;
