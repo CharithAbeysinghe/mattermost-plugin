@@ -71,6 +71,10 @@ const Button = styled.button`
     }
 `;
 
+const Span = styled.span`
+    cursor: pointer;
+`;
+
 function PaginatedTable<T>({data, columns, rowsPerPage = 10,paginate = true,onItemClick}: PaginatedTableProps<T>): JSX.Element {
     const [currentPage, setCurrentPage] = useState(0);
 
@@ -98,18 +102,13 @@ function PaginatedTable<T>({data, columns, rowsPerPage = 10,paginate = true,onIt
 
                                     <Td key={colIndex}>
                                     {col.renderLink ? (
-                                        <span onClick={() => onItemClick(col.renderLink?.(row))
+                                        <Span onClick={() => onItemClick(col.renderLink?.(row))
                                         
-                                        } > {String(row[col.accessor])}</span>
-
-                                        // <a href={col.renderLink(row)} style={{color: 'var(--button-bg)', textDecoration: 'underline'}}>
-                                        //     {String(row[col.accessor])}
-                                        // </a>
+                                        } > {String(row[col.accessor])}</Span>
                                     ) : (
                                         String(row[col.accessor])
                                     )}
                                 </Td>
-                                    // <Td key={colIndex}>{String(row[col.accessor])}</Td>
                                 ))}
                             </Tr>
                         ))}
