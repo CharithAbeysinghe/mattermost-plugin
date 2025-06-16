@@ -33,11 +33,6 @@ export default class Plugin {
                     MyHeaderCenter,
                     MyHeaderRight,
                     true,
-                    // null,
-                    // false,                  // showTeamSidebar
-                    // true,                  // showAppBar
-                    // true,                  // wrapped
-                    // null                   // publicComponent (optional)
             );
 
     }

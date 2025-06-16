@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Route, Switch} from 'react-router-dom';
 import Sidebar from './sidebar/Sidebar';
 import styled, { css } from 'styled-components';
@@ -13,11 +13,13 @@ import MyProjects from './MyStatus/MyProjects';
 import { useSelector } from 'react-redux';
 import {GlobalState} from '@mattermost/types/store';
 import {Theme, getTheme} from 'mattermost-redux/selectors/entities/preferences';
+import { AuthProvider } from '@/context/AuthContext';
+import { getPermissions, Role } from '@/utils/auth';
 
 
 const Main = () => {
 
-     const currentTheme = useSelector<GlobalState, Theme>(getTheme);
+    const currentTheme = useSelector<GlobalState, Theme>(getTheme);
     useEffect(() => {
         // This class, critical for all the styling to work, is added by ChannelController,
         // which is not loaded when rendering this root component.
@@ -31,25 +33,42 @@ const Main = () => {
         };
     }, [currentTheme]);
 
-    return (
-            <BackstageContainer>
-                <MainContainer $noContainerScroll={true}>
-                    <LHSContainer data-testid='lhs-navigation'>
-                            <Sidebar/>
-                    </LHSContainer>
+    const currentUserRole:Role= 'member'; // set logged user role
 
-                    <Switch >
-                        <RHSContainer>
-                            <Route exact path={`/project-overview`} component={Project} />
-                            <Route path={`/project-overview/stack-holders`} component={StakeHolder} />
-                            <Route path={`/project-overview/my-status`} component={MyStatus} />
-                            <Route path={`/project-overview/project/:id`} component={ProjectTabs} />
-                            <Route path={`/project-overview/stack-holder/:id`} component={StakeHolderTabs} />
-                            <Route path={`/project-overview/my-stats/:id`} component={MyProjects} />
-                        </RHSContainer>
-                    </Switch>
-                </MainContainer>
-            </BackstageContainer>
+    const permissions = getPermissions(currentUserRole);
+
+        return (
+            <AuthProvider role={currentUserRole}>
+                <BackstageContainer>
+                    <MainContainer $noContainerScroll={true}>
+                        <LHSContainer data-testid='lhs-navigation'>
+                                <Sidebar/>
+                        </LHSContainer>
+
+                        <Switch >
+                            <RHSContainer>
+                                    { permissions.accessLink ? (
+                                    <>
+                                        <Route exact path={`/project-overview`} component={Project} />
+                                        <Route path={`/project-overview/stack-holders`} component={StakeHolder} />
+                                        
+                                        <Route path={`/project-overview/project/:id`} component={ProjectTabs} />
+                                        <Route path={`/project-overview/stack-holder/:id`} component={StakeHolderTabs} />
+
+                                        <Route path={`/project-overview/my-status`} component={MyStatus} />
+                                        <Route path={`/project-overview/my-stats/:id`} component={MyProjects} />
+                                    </>
+                                   ) : ( <>
+                                         <Route exact path={`/project-overview`} component={MyStatus} />
+                                        <Route path={`/project-overview/my-stats/:id`} component={MyProjects} />
+                                   </> )}
+                                    
+                                        
+                            </RHSContainer>
+                        </Switch>
+                    </MainContainer>
+                </BackstageContainer>
+        </AuthProvider>
     );
 };
 

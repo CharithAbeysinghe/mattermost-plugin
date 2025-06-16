@@ -1,17 +1,23 @@
 // Copyright (c) 2020-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '@/context/AuthContext';
+import { getPermissions } from '@/utils/auth';
 
 const Sidebar = () => {
+    const {role} = useAuth();
+    const permissions = getPermissions(role);    
     const location = useLocation();
 
     const navItems = [
-        { label: 'Projects', path: '/project-overview' },
-        { label: 'Stake Holder', path: '/project-overview/stack-holders' },
-        { label: 'My Status', path: '/project-overview/my-status' },
+        { label: 'Projects', path: '/project-overview', show:permissions.accessLink },
+        { label: 'Stake Holder', path: '/project-overview/stack-holders', show:permissions.accessLink},
+        { label: 'My Status', path: '/project-overview/my-status' , show:permissions.accessLink},
+        
+        { label: 'My Status', path: '/project-overview' , show:permissions.myStatusUser},
     ];
 
     return (
@@ -19,9 +25,16 @@ const Sidebar = () => {
             <Header>Project Overview</Header>
             <NavList>
                 {navItems.map((item) => (
-                    <NavItem key={item.path} active={location.pathname === item.path}>
-                        <StyledLink to={item.path}>{item.label}</StyledLink>
-                    </NavItem>
+                    <>
+                    {item.show && 
+
+                        <NavItem key={item.path} active={location.pathname === item.path}>
+                            <StyledLink to={item.path}>{item.label}</StyledLink>
+                        </NavItem>
+
+                    }
+                        
+                    </>
                 ))}
             </NavList>
         </SidebarComponent>
