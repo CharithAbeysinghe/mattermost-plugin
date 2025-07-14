@@ -8,16 +8,13 @@ import type {GlobalState} from '@mattermost/types/store';
 import manifest from '@/manifest';
 
 import Main from './Components/Main';
+import RoleAssignment from './Components/Header/RoleAssignment';
 // import Test from './Components/Test';
 
 
 const MyHeaderCenter = () => {
     return null;
 };
-const MyHeaderRight = () => {
-    return null;
-};
-
 
 export default class Plugin {
 
@@ -31,7 +28,7 @@ export default class Plugin {
                     '/project-overview',   // switcherLinkURL (where it links)
                     Main,         // mainComponent (React component)
                     MyHeaderCenter,
-                    MyHeaderRight,
+                    RoleAssignment,
                     true,
             );
 

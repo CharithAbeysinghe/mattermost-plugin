@@ -33,7 +33,7 @@ const Main = () => {
         };
     }, [currentTheme]);
 
-    const currentUserRole:Role= 'member'; // set logged user role
+    const currentUserRole:Role= 'admin'; // set logged user role
 
     const permissions = getPermissions(currentUserRole);
 
